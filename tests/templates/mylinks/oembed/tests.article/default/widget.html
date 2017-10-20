@@ -1,0 +1,153 @@
+{% load tests  %}
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Fanimal Market</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style type="text/css">
+* {
+  font: 14px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  padding:0;
+  margin:0;
+  }
+.clearfix:after {
+  content: ".";
+  clear: both;
+  display: block;
+  line-height: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+img{
+  max-width: 100%;
+  height:auto;
+}
+
+.article-widget {
+  max-width:100%;
+  border: 1px solid #d8d8d8;
+  border-radius: 5px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.article-subject {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #d8d8d8;
+  padding: 10px;
+}
+
+.article-subject p{
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: bold;
+  border-left: 3px solid #d2d2d2;
+  padding-left: 5px;
+}
+
+.article-text {
+  padding: 10px;
+  margin:0px;
+  overflow: hidden;
+  }
+
+.article-box{
+  float:left;
+  width:70%;
+}
+
+.article-img{
+  float:right;
+  width:27%;
+}
+
+.btn a {
+  background-color: #f78d5a;
+  border-color: #f78d5a;
+  color: #ffffff;
+  display:block;
+  text-align: center;
+  padding:5px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top:10px;
+}
+
+.btn a:hover {
+  opacity:0.7;
+}
+
+h2 {
+  margin-top: 0;
+  border-bottom: 2px solid #f7ab00;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+@media only screen and (min-width : 320px) {
+
+.article-box{
+  float:none;
+  width:100%;
+}
+
+.article-img{
+  float:none;
+  width:100%;
+}
+
+.discription{
+  line-height:1.6;
+  margin-top:10px;
+}
+
+}
+
+@media only screen and (min-width : 768px) {
+
+.article-box{
+  float:left;
+  width:70%;
+}
+
+.article-img{
+  float:right;
+  width:27%;
+}
+
+.discription{
+  line-height:1.6;
+  margin-top:0px;
+}
+
+}
+
+</style>
+
+</head>
+<body>
+<div class="article-widget">
+
+  <div class="article-subject">
+    <p>{{ instance.title }}</p>
+  </div>
+
+  <div class="article-text clearfix">
+    <p class="article-img"><img src="__image_url__"></p>
+    <div class="article-box">
+      <div class="discription">Instance of the Article</div>
+      <p class="btn">
+        <a onclick="javascript:window.open().location.href='{% buildfullurl instance.get_absolute_url %}';return false;">Click Here</a>
+      </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

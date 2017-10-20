@@ -1,0 +1,12 @@
+{
+	"version": "1.0",
+	"type": "rich",
+	"provider_name": "__provider_name__",
+	"provider_url": "__provider_url__",
+	"width": 425,
+	"height": 344,
+	"title": "{{ instance.title }}",
+	"author_name": "{{ instance.user }}",
+	"author_url": "__author_url__",
+	"html": ""
+}

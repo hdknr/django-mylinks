@@ -1,0 +1,8 @@
+# Django
+django
+
+# Tool
+beautifulsoup4
+
+# REST
+requests

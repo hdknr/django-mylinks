@@ -1,0 +1,6 @@
+{% load tests %}
+<a href="{% fullurl 'article_detail' id=instance.id %}"
+  class="widget-embed" data-gh-widget="{{ instance.id }}" target="_blank">
+  {{ instance }}
+</a>
+<script src="{% fullurl 'mylinks_oembed_script' content_type='tests.article' id=instance.id  %}"></script>
