@@ -3,6 +3,7 @@ django
 
 # Tool
 beautifulsoup4
+django-click
 
 # REST
 requests
