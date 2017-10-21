@@ -2,12 +2,11 @@ from django.contrib import admin
 from . import models
 
 
-class LinkAdminInline(admin.TabularInline):
-    model = models.Link
+class PageAdminInline(admin.TabularInline):
+    model = models.Page
     extra = 1
 
 
-@admin.register(models.Word)
+@admin.register(models.Site)
 class SiteAdmin(admin.ModelAdmin):
-    list_display = ['id', 'text', ]
-    inlines = [LinkAdminInline]
+    inlines = [PageAdminInline]
