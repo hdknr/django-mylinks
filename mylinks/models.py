@@ -1,4 +1,3 @@
-# coding: utf-8
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from . import defs, methods
@@ -10,7 +9,7 @@ class Site(defs.Site, methods.Site):
         verbose_name = _(' Site')
         verbose_name_plural = _(' Site')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -22,7 +21,7 @@ class Page(defs.Page, methods.Page):
         verbose_name = _('Web Page')
         verbose_name_plural = _('Web Page')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title or self.url
 
     def save(self, *args, **kwargs):

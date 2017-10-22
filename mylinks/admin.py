@@ -9,4 +9,10 @@ class PageAdminInline(admin.TabularInline):
 
 @admin.register(models.Site)
 class SiteAdmin(admin.ModelAdmin):
-    inlines = [PageAdminInline]
+    list_display = ['id', 'host', 'name', ]
+
+
+@admin.register(models.Page)
+class PageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'url', ]
+    raw_id_fields = ['site']
