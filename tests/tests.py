@@ -6,6 +6,7 @@ from unittest import TestCase as UnitTestCase
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urlparse, parse_qs
 from tests import models
+from mylinks import oembed
 from mylinks.models import Page
 import json
 
@@ -57,6 +58,11 @@ class PageCase(UnitTestCase):
         node = Soup(page.embed, "html5lib").select('iframe')[-1]
         src = 'https://www.youtube.com/embed/{}?feature=oembed'.format(v)
         self.assertEqual(src, node['src'])
+
+    def test_qiita(self):
+        url = 'https://qiita.com/nonbiri15/items/d36ba908c8469cc97518'
+        page = Page(url=url)
+        page.update_content()
 
 
 class OembedCase(UnitTestCase):

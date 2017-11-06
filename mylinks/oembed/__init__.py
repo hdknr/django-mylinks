@@ -15,7 +15,7 @@ PATTERN = [
     (r'(?P<scheme>https)\://(?P<host>www.youtube.com)(?P<path>/watch.+)', YOUTUBE),   # NOQA
     (r'(?P<scheme>https)\://(?P<host>www.instagram.com)(?P<path>/p/.+/)$', INSTAGRAM),  # NOQA
     (r'(?P<scheme>https)\://(?P<host>twitter.com)(?P<path>.+)$', TWITTER),
-    (r'(?P<scheme>http)\://(?P<host>qiita.com)(?P<path>.+/items/)(?P<id>.+)$', QIITA),   # NOQA
+    (r'(?P<scheme>https*)\://(?P<host>qiita.com)(?P<path>.+/items/)(?P<id>.+)$', QIITA),   # NOQA
 ]
 
 
@@ -37,9 +37,8 @@ def get(url):
     for pattern in PATTERN:
         match = re.search(pattern[0], url)
         if match:
-            return (
-                pattern[1].format(url=urlquote(url), **match.groupdict()),
-                requests.get(url).text)
+            url = pattern[1].format(url=urlquote(url), **match.groupdict())
+            return (url, requests.get(url).text)
     return find(url)
 
 
