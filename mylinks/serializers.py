@@ -14,5 +14,5 @@ class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Page
-        fields = '__all__'
-        read_only_fields = ['site', 'embed', 'source']
+        exclude = ['source']
+        read_only_fields = ['site', 'embed', ]
