@@ -1,5 +1,5 @@
 from django import http
-from .serializers import BaseObjectSerializer as _S
+from .encoders import BaseObjectSerializer as _S
 
 
 def cors(response, origin='*'):

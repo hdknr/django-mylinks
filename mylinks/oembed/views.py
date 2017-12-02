@@ -2,7 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.template.loader import get_template
 from django import http
 from django.template.response import TemplateResponse
-from mylinks import responses, serializers
+from mylinks import responses
 #
 from logging import getLogger
 import json

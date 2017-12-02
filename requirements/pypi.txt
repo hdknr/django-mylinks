@@ -7,6 +7,9 @@ django-click
 
 # REST
 requests
+djangorestframework
+djangorestframework-filter
+django-filter
 
 # Parser
 html5lib

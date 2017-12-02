@@ -27,7 +27,7 @@ class Page(object):
         oembed = self.get_html()
         self.source = oembed['source']  # .encode('utf8')
         self.embed = oembed['html']
-        self.title = self.source_title
+        self.title = self.title or self.source_title
         self.save()
 
     @property
