@@ -26,4 +26,5 @@ class Page(defs.Page, methods.Page):
 
     def save(self, *args, **kwargs):
         self.update_site()
+        self.update_content()
         super(Page, self).save(*args, **kwargs)

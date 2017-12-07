@@ -28,7 +28,6 @@ class Page(object):
         self.source = oembed['source']  # .encode('utf8')
         self.embed = oembed['html']
         self.title = self.title or self.source_title
-        self.save()
 
     @property
     def source_soup(self):
