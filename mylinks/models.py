@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from . import defs, methods
+from . import defs, methods, querysets
 
 
 class Site(defs.Site, methods.Site):
@@ -20,6 +20,8 @@ class Page(defs.Page, methods.Page):
     class Meta:
         verbose_name = _('Web Page')
         verbose_name_plural = _('Web Page')
+
+    objects = querysets.PageQuerySet.as_manager()
 
     def __str__(self):
         return self.title or self.url
