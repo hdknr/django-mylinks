@@ -12,6 +12,12 @@ class SiteAdmin(admin.ModelAdmin):
     list_display = ['id', 'host', 'name', ]
 
 
+@admin.register(models.Link)
+class LinkAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'url', 'site']
+    raw_id_fields = ['site']
+
+
 @admin.register(models.Page)
 class PageAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'url', ]

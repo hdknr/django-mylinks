@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from . import methods
 
 
 class Site(models.Model):
@@ -12,6 +13,20 @@ class Site(models.Model):
     brand = models.TextField(
         _('Site Brand'),
         null=True, default=None, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class Link(models.Model):
+
+    url = models.CharField(
+        _('Link URL'), unique=True, db_index=True,
+        max_length=200, validators=[methods.is_ascii])
+
+    title = models.CharField(
+        _('Title'), max_length=250,
+        null=True, blank=True, default=None)
 
     class Meta:
         abstract = True

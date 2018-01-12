@@ -1,6 +1,11 @@
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urlparse
 from mylinks.oembed import get_html
+import re
+
+
+def is_ascii(s):
+    return bool(re.match(r'[\x00-\x7F]+$', s))
 
 
 class Site(object):
@@ -10,15 +15,21 @@ class Site(object):
         return u"http://{}/".format(self.host)
 
 
-class Page(object):
+class Link(object):
 
     def update_site(self):
         from . import models
         url = self.url and urlparse(self.url)
+        if not url or not url.netloc:
+            return
+            
         if not self.site or self.site.host != url.netloc:
             self.site = models.Site.objects.filter(
                 host=url.netloc).first() or models.Site.objects.create(
                     host=url.netloc, name=url.netloc)
+
+
+class Page(Link):
 
     def get_html(self):
         return get_html(self.url)

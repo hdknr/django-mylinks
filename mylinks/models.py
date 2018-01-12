@@ -13,6 +13,23 @@ class Site(defs.Site, methods.Site):
         return self.name or ''
 
 
+class Link(defs.Link, methods.Link):
+    site = models.ForeignKey(Site, null=True, blank=True, default=None)
+
+    class Meta:
+        verbose_name = _('Web Link')
+        verbose_name_plural = _('Web Link')
+
+    objects = querysets.LinkQuerySet.as_manager()
+
+    def __str__(self):
+        return self.title or self.url
+        
+    def save(self, *args, **kwargs):
+        self.update_site()
+        super(Link, self).save(*args, **kwargs)
+
+
 class Page(defs.Page, methods.Page):
 
     site = models.ForeignKey(Site, null=True, blank=True, default=None)
