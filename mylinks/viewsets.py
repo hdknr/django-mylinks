@@ -28,3 +28,12 @@ class PageViewSet(viewsets.ModelViewSet):
     filter_class = filters.PageFilter
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     pagination_class = Pagination
+
+
+class LinkViewSet(viewsets.ModelViewSet):
+
+    queryset = models.Link.objects.all()
+    serializer_class = serializers.LinkSerializer
+    filter_class = filters.LinkFilter
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    pagination_class = Pagination
