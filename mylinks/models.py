@@ -14,7 +14,8 @@ class Site(defs.Site, methods.Site):
 
 
 class Link(defs.Link, methods.Link):
-    site = models.ForeignKey(Site, null=True, blank=True, default=None)
+    site = models.ForeignKey(
+        Site, null=True, blank=True, default=None, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _('Web Link')
@@ -31,8 +32,8 @@ class Link(defs.Link, methods.Link):
 
 
 class Page(defs.Page, methods.Page):
-
-    site = models.ForeignKey(Site, null=True, blank=True, default=None)
+    site = models.ForeignKey(
+        Site, null=True, blank=True, default=None, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _('Web Page')
