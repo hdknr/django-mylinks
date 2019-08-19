@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import mylinks.methods
+import mylinks.models.methods
 
 
 class Migration(migrations.Migration):
@@ -26,6 +26,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Web Link',
                 'verbose_name_plural': 'Web Link',
             },
-            bases=(models.Model, mylinks.methods.Link),
+            bases=(models.Model, mylinks.models.methods.Link),
         ),
     ]

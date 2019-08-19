@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import mylinks.methods
+import mylinks.models.methods
 
 
 class Migration(migrations.Migration):
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Web Page',
                 'verbose_name_plural': 'Web Page',
             },
-            bases=(models.Model, mylinks.methods.Page),
+            bases=(models.Model, mylinks.models.methods.Page),
         ),
         migrations.CreateModel(
             name='Site',
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 'verbose_name': ' Site',
                 'verbose_name_plural': ' Site',
             },
-            bases=(models.Model, mylinks.methods.Site),
+            bases=(models.Model, mylinks.models.methods.Site),
         ),
         migrations.AddField(
             model_name='page',

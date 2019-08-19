@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import mylinks.methods
+import mylinks.models.methods
 
 
 class Migration(migrations.Migration):
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='link',
             name='url',
-            field=models.CharField(db_index=True, max_length=200, unique=True, validators=[mylinks.methods.is_ascii], verbose_name='Link URL'),
+            field=models.CharField(db_index=True, max_length=200, unique=True, validators=[mylinks.models.methods.is_ascii], verbose_name='Link URL'),
         ),
     ]
