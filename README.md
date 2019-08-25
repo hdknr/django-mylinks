@@ -33,3 +33,10 @@ urlpatterns = [
     ...
 ]
 ~~~
+
+## templates under `templates/mylinks/oembed/{{ content_type }}/{{ style }}`
+
+- oembed.json: OEMBED json
+- embed.html: html returned in OEMBED json['html']
+- widget.js: javascript
+- widget.html: `iframe` content rendered by widget.js
