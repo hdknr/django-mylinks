@@ -18,15 +18,14 @@ class Site(object):
 class Link(object):
 
     def update_site(self):
-        from . import models
+        SiteModel = self._meta.get_field('site').related_model
         url = self.url and urlparse(self.url)
         if not url or not url.netloc:
             return
             
         if not self.site or self.site.host != url.netloc:
-            self.site = models.Site.objects.filter(
-                host=url.netloc).first() or models.Site.objects.create(
-                    host=url.netloc, name=url.netloc)
+            self.site = SiteModel.objects.create(
+                host=url.netloc, name=url.netloc)
 
 
 class Page(Link):

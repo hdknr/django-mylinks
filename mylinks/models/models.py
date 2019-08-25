@@ -3,17 +3,19 @@ from django.utils.translation import ugettext_lazy as _
 from . import defs, methods, querysets
 
 
-class Site(defs.Site, methods.Site):
+class Site(defs.Site):
 
     class Meta:
         verbose_name = _(' Site')
         verbose_name_plural = _(' Site')
 
+    objects = querysets.SiteQuerySet.as_manager()
+
     def __str__(self):
         return self.name or ''
 
 
-class Link(defs.Link, methods.Link):
+class Link(defs.Link):
     site = models.ForeignKey(
         Site, null=True, blank=True, default=None, on_delete=models.CASCADE)
 
@@ -31,7 +33,7 @@ class Link(defs.Link, methods.Link):
         super(Link, self).save(*args, **kwargs)
 
 
-class Page(defs.Page, methods.Page):
+class Page(defs.Page):
     site = models.ForeignKey(
         Site, null=True, blank=True, default=None, on_delete=models.CASCADE)
 

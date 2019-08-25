@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from . import methods
 
 
-class Site(models.Model):
+class Site(models.Model, methods.Site):
     host = models.CharField(
         _('Site Host Name'), max_length=50, unique=True, db_index=True)
 
@@ -18,7 +18,7 @@ class Site(models.Model):
         abstract = True
 
 
-class Link(models.Model):
+class Link(models.Model, methods.Link):
 
     url = models.CharField(
         _('Link URL'), unique=True, db_index=True,
@@ -32,7 +32,7 @@ class Link(models.Model):
         abstract = True
 
 
-class Page(models.Model):
+class Page(models.Model, methods.Page):
 
     url = models.URLField(
         _('Link URL'), unique=True, db_index=True)

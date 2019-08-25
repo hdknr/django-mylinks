@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from django.contrib.auth.models import User
 import djclick as click
 from ... import models
 from logging import getLogger
