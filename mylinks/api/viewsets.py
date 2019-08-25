@@ -2,7 +2,8 @@ from django.contrib.contenttypes.models import ContentType
 from collections import OrderedDict
 from rest_framework import viewsets, pagination, permissions
 from rest_framework.response import Response
-from . import models, serializers, filters
+from .. import models
+from . import serializers, filters
 
 
 class Pagination(pagination.PageNumberPagination):

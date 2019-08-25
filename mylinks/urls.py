@@ -1,6 +1,6 @@
-from django.conf.urls import url, include
-from . import api
+from django.urls import path, include
+
 
 urlpatterns = [
-    url(r'^api/', include(api)),
+    path(r'api/', include('mylinks.api.urls')),
 ]

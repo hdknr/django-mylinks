@@ -1,6 +1,6 @@
 from rest_framework import serializers, fields
 from django.forms.models import model_to_dict
-from . import models
+from .. import models
 
 
 class SiteSerializer(serializers.ModelSerializer):

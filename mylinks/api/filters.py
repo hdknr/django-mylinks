@@ -1,5 +1,5 @@
 import django_filters
-from . import models
+from .. import models
 
 
 class PageFilter(django_filters.FilterSet):
