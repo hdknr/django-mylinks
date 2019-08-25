@@ -30,7 +30,7 @@ class Link(defs.Link):
         
     def save(self, *args, **kwargs):
         self.update_site()
-        super(Link, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class Page(defs.Page):
@@ -49,4 +49,4 @@ class Page(defs.Page):
     def save(self, *args, **kwargs):
         self.update_site()
         self.update_content()
-        super(Page, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

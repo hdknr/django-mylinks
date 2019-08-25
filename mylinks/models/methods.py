@@ -1,3 +1,4 @@
+from django.utils.html import mark_safe
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urlparse
 from mylinks.oembed import get_html
@@ -65,3 +66,7 @@ class Page(Link):
                 for e in self.source_soup.select('img') if 'src' in e.attrs]
 
         return list(sorted(set(srcs)))
+
+    @property
+    def embed_html(self):
+        return self.embed and mark_safe(self.embed)

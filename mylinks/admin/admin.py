@@ -1,5 +1,5 @@
 from django.contrib import admin
-from . import models
+from .. import models
 
 
 class PageAdminInline(admin.TabularInline):
@@ -16,9 +16,12 @@ class SiteAdmin(admin.ModelAdmin):
 class LinkAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'url', 'site']
     raw_id_fields = ['site']
+    search_fields = ['title', 'url', ]
 
 
 @admin.register(models.Page)
 class PageAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'url', ]
     raw_id_fields = ['site']
+    search_fields = ['title', 'url', 'embed', 'source']
+    readonly_fields = ['embed_html']
