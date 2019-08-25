@@ -3,4 +3,4 @@
   class="widget-embed" data-gh-widget="{{ instance.id }}" target="_blank">
   {{ instance }}
 </a>
-<script src="{% fullurl 'mylinks_oembed_script' content_type='tests.article' id=instance.id  %}"></script>
+<script src="{% fullurl 'mylinks_oembed_script' content_type=content_type id=instance.id  %}"></script>

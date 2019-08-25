@@ -1,6 +1,5 @@
-# coding: utf-8
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import Client
 from unittest import TestCase as UnitTestCase
 from bs4 import BeautifulSoup as Soup
@@ -9,6 +8,7 @@ from tests import models
 from mylinks import oembed
 from mylinks.models import Page
 import json
+import re
 
 
 def contenttype(model):
@@ -47,8 +47,9 @@ class PageCase(UnitTestCase):
         url = 'https://www.instagram.com/p/BagxHa_AupI/'
         page = Page(url=url)
         page.update_content()
-        node = Soup(page.embed, "html5lib").select('a')[-1]
-        self.assertEqual(url, node['href'])
+        soup = Soup(page.embed, "html5lib")
+        nodes = [n['href'] for n in soup.select('a')]
+        self.assertTrue(url in nodes)
 
     def test_youtube(self):
         url = 'https://www.youtube.com/watch?v=wF-4-DcCQoI'
@@ -72,29 +73,43 @@ class OembedCase(UnitTestCase):
             author='author', title='title')
         self.client = Client()
 
-    def test_api(self):
         ct = contenttype(self.instance)
         key = ".".join(ct.natural_key())
-        url = reverse(
-            'mylinks_oembed_api',
-            kwargs=dict(content_type=key, id=self.instance.id))
-        response = self.client.get(url)
+
+        kwargs = dict(content_type=key, id=self.instance.id)
+
+        self.api_url = reverse('mylinks_oembed_api', kwargs=kwargs)
+        self.script_url = reverse('mylinks_oembed_script', kwargs=kwargs)
+        self.widget_url = reverse('mylinks_oembed_widget', kwargs=kwargs)
+        self.embed_url = reverse('mylinks_oembed_embed', kwargs=kwargs)
+        self.page_url = reverse('article_detail', kwargs={'id': self.instance.id})
+
+    def test_api(self):
+
+        # call API to get JSON
+        response = self.client.get(self.api_url)
+        soup = Soup(response.json()['html'], "html5lib") 
         self.assertEqual(response.status_code, 200)
 
-        data = json.loads(response.content.decode('utf-8'))
+        # json['html] include script@src
+        data = response.json()
         node = Soup(data['html'], "html5lib").select('script')[0]
         path = urlparse(node['src']).path
-        url = reverse(
-            'mylinks_oembed_script',
-            kwargs=dict(content_type=key, id=self.instance.id))
-        self.assertEqual(path, url)
+        self.assertEqual(path, self.script_url)
 
-        response = self.client.get(url)
+        # script url(fetch widget iframe and render it)
+        response = self.client.get(self.script_url)
         self.assertEqual(response.status_code, 200)
+        url = f"http://testserver{self.widget_url}"
+        self.assertTrue(url in response.rendered_content)
 
-        url = reverse(
-            'mylinks_oembed_widget',
-            kwargs=dict(content_type=key, id=self.instance.id))
-        response = self.client.get(url)
+        # widget fetch by script 
+        response = self.client.get(self.widget_url)
         self.assertEqual(response.status_code, 200)
         node = Soup(response.content, "html5lib").select('a')[0]
+        onclick = \
+            f"javascript:window.open().location.href='"\
+            f"http://testserver{self.page_url}"\
+            f"';return false;"
+
+        self.assertEqual(node.attrs['onclick'], onclick)

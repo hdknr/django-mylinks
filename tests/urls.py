@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import path, re_path, include
 
 
 def article_detail(request, id):
@@ -6,6 +6,6 @@ def article_detail(request, id):
 
 
 urlpatterns = [
-    url(r'^oembed/', include('mylinks.oembed.urls')),
-    url(r'^article/(?P<id>\d+)', article_detail, name='article_detail'),
+    path('mylinks/', include('mylinks.urls')),
+    re_path(r'^article/(?P<id>\d+)', article_detail, name='article_detail'),
 ]

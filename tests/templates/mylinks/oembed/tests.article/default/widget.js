@@ -1,7 +1,7 @@
-{% load tests %}
+{% load tests %}{# javascript to render 'widget.html' in browser #}
 (function(){
   'use strict';
-   function resizeIFrameToFitContent( iFrame ) {
+  function resizeIFrameToFitContent( iFrame ) {
     iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
   }
@@ -47,6 +47,6 @@
       }
     }
   }
-  req.open('GET', '{% fullurl "mylinks_oembed_widget" id=instance.id content_type="tests.article" %}');
+  req.open('GET', '{% fullurl "mylinks_oembed_widget" id=instance.id content_type=content_type %}');
   req.send(null);
 })();

@@ -1,4 +1,6 @@
 from django.utils.html import mark_safe
+from django.utils.functional import cached_property
+
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urlparse
 from mylinks.oembed import get_html
@@ -40,11 +42,13 @@ class Page(Link):
         self.embed = oembed['html']
         self.title = self.title or self.source_title
 
-    @property
+    @cached_property
     def source_soup(self):
-        if not hasattr(self, '_soup'):
-            self._soup = self.source and Soup(self.source, 'html.parser')
-        return self._soup
+        return self.source and Soup(self.source, 'html.parser')
+
+    @cached_property
+    def embed_soup(self):
+        return self.embed and Soup(self.embed, 'html.parser')
 
     @property
     def source_title(self):

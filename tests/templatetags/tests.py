@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from django import template
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 register = template.Library()
 
 

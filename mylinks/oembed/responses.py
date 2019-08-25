@@ -15,7 +15,7 @@ class JSONResponse(http.HttpResponse):
                  *args, **kwargs):
         json_opts = json_opts if isinstance(json_opts, dict) else {}
         content = _S.to_json(obj, **json_opts)
-        super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
+        super().__init__(content, mimetype, *args, **kwargs)
         cors(self)
 
 
@@ -23,7 +23,7 @@ def page_not_found():
     raise http.Http404
 
 
-def render(self, instance, template, content_type=None):
-    res = self.render(
-        template, content_type=content_type, instance=instance)
-    return cors(res, origin='*')
+# def render(self, instance, template, content_type=None):
+#     res = self.render(
+#         template, content_type=content_type, instance=instance)
+#     return cors(res, origin='*')

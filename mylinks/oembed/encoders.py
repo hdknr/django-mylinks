@@ -4,10 +4,8 @@ from django.db.models.fields.files import FieldFile
 from django.core.files import File
 from datetime import datetime
 from enum import Enum
-from corekit import utils
 from decimal import Decimal
 import json
-import yaml
 import io
 
 
@@ -46,10 +44,6 @@ class BaseObjectSerializer(json.JSONEncoder):
     @classmethod
     def load_json(cls, jsonstr,  *args, **kwargs):
         return json.loads(jsonstr, *args, **kwargs)
-
-    @classmethod
-    def to_yaml(cls, obj, *args, **kwargs):
-        return yaml.safe_dump(obj, *args, **kwargs)
 
     @classmethod
     def to_dict(cls, obj, *args, **kwargs):
