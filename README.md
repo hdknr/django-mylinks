@@ -1,6 +1,6 @@
 # django-mylinks
 
-- Link and oembed
+- Link and [oembed](https://oembed.com/)
 
 ## settings.py
 

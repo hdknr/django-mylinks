@@ -9,4 +9,4 @@
 	"author_name": "{{ instance.author }}",
 	"author_url": "__author_url__",
 	"html": ""
-}
+}{# https://oembed.com/#section2 #}
