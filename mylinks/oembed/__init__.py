@@ -20,42 +20,43 @@ PATTERN = [
 
 
 def parse_embed_url(html):
+    '''parse oembed url from page'''
     soup = Soup(html, 'html.parser')
     items = soup and soup.select('link[type="application/json+oembed"]')
     return items and items[0].attrs['href']
 
 
-def find(url):
-    res = requests.get(url)
+def oembed_html(json_data):
+    for i in ['html', 'rendered_body']:
+        if i in json_data:
+            return json_data[i]
+
+
+def find(given_url):
+    url, source, embed, data = None, None, None, None
+    res = requests.get(given_url)
     if res and res.status_code == 200 \
             and res.headers.get('Content-Type', '').startswith('text/html'):
-        return (parse_embed_url(res.text), res.text)
-    return (None, res.text)
+        url, source = parse_embed_url(res.text), res.text
+
+    if url:
+        res =  requests.get(url)
+        embed = oembed_html(res.json())
+        data = res.text
+
+    return (url, embed, source, data)
 
 
-def get(url):
+def resolve(url):
     for pattern in PATTERN:
         match = re.search(pattern[0], url)
         if match:
             url = pattern[1].format(url=urlquote(url), **match.groupdict())
-            return (url, requests.get(url).text)
+            res = requests.get(url)
+            return (url, oembed_html(res.json()), None, res.text)
+
     return find(url)
 
 
-def get_html(url, force_source=False):
-    items = ['url', 'source', 'html', ]
-    oembed = dict((k, cache.get("oembed:{}:{}".format(k, url))) for k in items)
-
-    if not oembed['html']:
-        oembed['url'], oembed['source'] = get(url)
-        if oembed['url']:
-            res = requests.get(oembed['url']).json()
-            for i in ['html', 'rendered_body']:
-                if i in res:
-                    oembed['html'] = res[i]
-                    break
-
-        map(lambda k: cache.set("oembed:{}:{}".format(k, url), oembed[k]),
-            items)
-
-    return oembed
+def get_oembed(url, force_source=False):
+    return dict(zip(('url', 'html', 'source', 'data'), resolve(url)))    #(url, html

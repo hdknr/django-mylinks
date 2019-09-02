@@ -13,6 +13,19 @@ def main(ctx):
 @main.command()
 @click.argument('url')
 @click.pass_context
-def add_page(ctx, url):
-    ''' Add a Page'''
-    models.Page.objects.create(url=url).update_content()
+def create_link(ctx, url):
+    ''' create a Link'''
+    models.Link.create_link(url=url)
+
+
+@main.command()
+@click.argument('url')
+@click.pass_context
+def get_oembed(ctx, url):
+    ''' create oembed'''
+    from mylinks.oembed import get_oembed 
+    res = get_oembed(url)
+    print(res['url'])
+    print(res['html'])
+    print(res['source'])
+    print(res['data'])

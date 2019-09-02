@@ -15,3 +15,7 @@ class LinkQuerySet(models.QuerySet):
 
 class PageQuerySet(LinkQuerySet):
     pass
+
+
+class ContentQuerySet(models.QuerySet):
+    pass

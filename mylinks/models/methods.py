@@ -3,7 +3,7 @@ from django.utils.functional import cached_property
 
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urlparse
-from mylinks.oembed import get_html
+from mylinks.oembed import get_oembed
 import re
 
 
@@ -30,8 +30,41 @@ class Link(object):
             self.site = SiteModel.objects.create(
                 host=url.netloc, name=url.netloc)
 
+    @classmethod
+    def create_link(cls, url, with_content=True):
+        link, created = cls.objects.get_or_create(url=url)
+        if with_content:
+            link.add_content()
+        return link
 
-class Page(Link):
+
+    @classmethod
+    def content_manager(cls):
+        return cls._meta.get_field('content').related_model.objects
+        
+    def add_content(self):
+        e = get_oembed(self.url)
+
+        if e['url']:
+            man = self.content_manager()
+            qs = man.filter(url=e['url'])
+            if qs.update(embed=e['html'], source=e['source'], data=e['data']) > 0:
+                self.content = qs.first()
+            else:
+                self.content = man.create(
+                    url=e['url'], embed=e['html'], source=e['source'], data=e['data'])
+        else: 
+            title = Soup(embed['source'], 'html.parser').select('title')
+            self.title = title and title[0] or self.title
+
+        self.save()
+
+    @property
+    def embed_html(self):
+        return self.content and self.content.embed and self.content.embed_html
+
+
+class Content(Link):
 
     def get_html(self):
         return get_html(self.url)
@@ -39,38 +72,13 @@ class Page(Link):
     def update_content(self):
         oembed = self.get_html()
         self.source = oembed['source']  # .encode('utf8')
-        self.embed = oembed['html']
-        self.title = self.title or self.source_title
-
-    @cached_property
-    def source_soup(self):
-        return self.source and Soup(self.source, 'html.parser')
+        self.embed= oembed['html']
 
     @cached_property
     def embed_soup(self):
         return self.embed and Soup(self.embed, 'html.parser')
 
     @property
-    def source_title(self):
-        title = self.source_soup and self.source_soup.select('title')
-        title = title and title[0]
-        return title and title.text or ''
-
-    @property
-    def source_images(self):
-
-        def _U(u):
-            if parse.urlparse(u).netloc:
-                return u
-            return parse.urljoin(self.url, u)
-
-        if not self.source_soup:
-            return []
-        srcs = [_U(e.attrs['src'])
-                for e in self.source_soup.select('img') if 'src' in e.attrs]
-
-        return list(sorted(set(srcs)))
-
-    @property
     def embed_html(self):
         return self.embed and mark_safe(self.embed)
+
