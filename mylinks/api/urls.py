@@ -4,7 +4,7 @@ from . import viewsets
 
 
 router = DefaultRouter()
-router.register(r'page', viewsets.PageViewSet, base_name='page')
+router.register(r'content', viewsets.ContentViewSet, base_name='content')
 router.register(r'link', viewsets.LinkViewSet, base_name='link')
 
 urlpatterns = [

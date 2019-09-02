@@ -22,11 +22,11 @@ class Pagination(pagination.PageNumberPagination):
         ]))
 
 
-class PageViewSet(viewsets.ModelViewSet):
+class ContentViewSet(viewsets.ModelViewSet):
 
-    queryset = models.Page.objects.all()
-    serializer_class = serializers.PageSerializer
-    filter_class = filters.PageFilter
+    queryset = models.Content.objects.all()
+    serializer_class = serializers.ContentSerializer
+    filter_class = filters.ContentFilter
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     pagination_class = Pagination
 
