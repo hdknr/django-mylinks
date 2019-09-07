@@ -8,14 +8,38 @@ class SiteQuerySet(models.QuerySet):
 
 
 class LinkQuerySet(models.QuerySet):
-    def create(self, url=None, *args, **kwargs):
-        return self.filter(url=url).first() or\
-            super().create(url=url, *args, **kwargs)
+    def create(self, url=None, **params):
+        if self.filter(url=url).update(**params) > 0:
+            return self.filter(url=url).first()
+        return super().create(url=url, **params)
 
 
-class PageQuerySet(LinkQuerySet):
-    pass
+class EmbedQuerySet(models.QuerySet):
 
+    @property
+    def link_model(self):
+        return self.model._meta.get_field('link_ptr').related_model
+
+    def find_link(self, url):
+        return self.link_model.objects.filter(url=url).first()
+
+    def from_link(self, link, **params):
+        params['url'] = params.get('url', link.url)
+        params['title'] = params.get('title', link.title)
+        # https://github.com/django/django/blob/master/django/db/models/base.py#L746
+        self.model(link_ptr=link, **params).save_base(raw=True)
+        return self.get(id=link.id)
+
+    def create(self, url=None, **params):
+        if self.filter(url=url).update(**params) > 0:
+            return self.filter(url=url).first()
+
+        link = self.find_link(url)
+        if link:
+            return self.from_link(link, **params)
+
+        return super().create(url=url, **params)
+    
 
 class ContentQuerySet(models.QuerySet):
     pass

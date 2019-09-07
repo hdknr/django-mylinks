@@ -13,9 +13,9 @@ def main(ctx):
 @main.command()
 @click.argument('url')
 @click.pass_context
-def create_link(ctx, url):
+def create_entry(ctx, url):
     ''' create a Link'''
-    models.Link.create_link(url=url)
+    models.create_entry(url=url)
 
 
 @main.command()

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .. import models
+from . import forms, inlines
 
 
 @admin.register(models.Site)
@@ -9,12 +10,24 @@ class SiteAdmin(admin.ModelAdmin):
 
 @admin.register(models.Link)
 class LinkAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'url', 'site']
+    list_display = ['id', 'title', 'url', 'site', 'subclass_type']
+    list_filter = ['subclass_type']
     raw_id_fields = ['site', 'content']
     search_fields = ['title', 'url', ]
-    readonly_fields = ['embed_html']
+    readonly_fields = ['markdown', 'embed_html']
+    form = forms.LinkForm
+    inlines = [
+        inlines.LinkTagItemInline,
+    ]
 
 
-@admin.register(models.Content)
-class ContentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'url', ]
+@admin.register(models.Embed)
+class EmbedAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'url', 'site']
+    raw_id_fields = ['site', 'content']
+    exclude = ['created_at', 'subclass_type']
+    search_fields = ['title', 'url', ]
+    readonly_fields = ['markdown', 'html', 'data', 'source']
+    inlines = [
+        inlines.LinkTagItemInline,
+    ]

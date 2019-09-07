@@ -19,6 +19,11 @@ PATTERN = [
 ]
 
 
+def parse_text(html, selector):
+    soup = Soup(html, 'html.parser')
+    elms = soup and soup.select(selector)
+    return elms and elms[0].text or ''
+
 def parse_embed_url(html):
     '''parse oembed url from page'''
     soup = Soup(html, 'html.parser')
@@ -31,20 +36,32 @@ def oembed_html(json_data):
         if i in json_data:
             return json_data[i]
 
+def oembed_title(json_data):
+    return json_data.get('title', None)
+
+def api(url):
+    res =  requests.get(url)
+    if res.headers.get('Content-Type', '').startswith('application/json'):
+        embed = oembed_html(res.json())
+        title = oembed_title(res.json())
+    else:
+        embed = None
+    return embed, title, res.text
 
 def find(given_url):
-    url, source, embed, data = None, None, None, None
+    url, title, source, embed, data = None, None, None, None, None
     res = requests.get(given_url)
+
     if res and res.status_code == 200 \
             and res.headers.get('Content-Type', '').startswith('text/html'):
         url, source = parse_embed_url(res.text), res.text
 
     if url:
-        res =  requests.get(url)
-        embed = oembed_html(res.json())
-        data = res.text
+        embed, title, data = api(url)
 
-    return (url, embed, source, data)
+    title = title or parse_text(source, 'title')
+
+    return (url, title, embed, source, data)
 
 
 def resolve(url):
@@ -52,11 +69,12 @@ def resolve(url):
         match = re.search(pattern[0], url)
         if match:
             url = pattern[1].format(url=urlquote(url), **match.groupdict())
-            res = requests.get(url)
-            return (url, oembed_html(res.json()), None, res.text)
+            embed, title, data = api(url)
+            return (url, title, embed, None, data)
 
     return find(url)
 
 
 def get_oembed(url, force_source=False):
-    return dict(zip(('url', 'html', 'source', 'data'), resolve(url)))    #(url, html
+    res = dict(zip(('url', 'title', 'html', 'source', 'data'), resolve(url)))    #(url, html
+    return res
