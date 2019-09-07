@@ -17,22 +17,9 @@ class Site(defs.Site):
         return self.name or ''
 
 
-class Content(defs.Content):
-    objects = querysets.ContentQuerySet.as_manager()
-
-    class Meta:
-        verbose_name = _('Web Conent')
-        verbose_name_plural = _('Web Contents')
-
-
 class Link(defs.Link):
     site = models.ForeignKey(
         Site, null=True, blank=True, default=None, on_delete=models.CASCADE)
-
-    content = models.ForeignKey(
-        Content, 
-        null=True, default=None, blank=True,
-        on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _('Web Link')

@@ -44,62 +44,6 @@ class Link(object):
     def embed_html(self):
         return hasattr(self, 'embed') and self.embed.safe_html or ''
 
-class Hoge:
-
-    @classmethod
-    def create_link(cls, url, with_content=True):
-        link, created = cls.objects.get_or_create(url=url)
-        if with_content:
-            link.add_content()
-        return link
-
-
-    @classmethod
-    def content_manager(cls):
-        return cls._meta.get_field('content').related_model.objects
-        
-    def add_content(self):
-        e = get_oembed(self.url)
-
-        if e['url'] and e['html']:
-            man = self.content_manager()
-            qs = man.filter(url=e['url'])
-            if qs.update(embed=e['html'], source=e['source'], data=e['data']) > 0:
-                self.content = qs.first()
-            else:
-                self.content = man.create(
-                    url=e['url'], embed=e['html'], source=e['source'], data=e['data'],
-                )
-            self.title = self.content.data_dict.get('title', self.title) 
-        else: 
-            title = Soup(e['source'], 'html.parser').select('title')
-            self.title = title and title[0].text or self.title
-
-        self.save()
-
-
-class Content(Link):
-
-    def get_html(self):
-        return get_html(self.url)
-
-    def update_content(self):
-        oembed = self.get_html()
-        self.source = oembed['source']  # .encode('utf8')
-        self.embed= oembed['html']
-
-    @cached_property
-    def embed_soup(self):
-        return self.embed and Soup(self.embed, 'html.parser')
-
-    @property
-    def embed_html(self):
-        return self.embed and mark_safe(self.embed)
-
-    @property
-    def data_dict(self):
-        return self.data and json.loads(self.data) or {}
-
 
 class Embed(object):
 

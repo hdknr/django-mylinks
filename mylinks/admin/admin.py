@@ -12,7 +12,7 @@ class SiteAdmin(admin.ModelAdmin):
 class LinkAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'url', 'site', 'subclass_type']
     list_filter = ['subclass_type']
-    raw_id_fields = ['site', 'content']
+    raw_id_fields = ['site', ]
     search_fields = ['title', 'url', ]
     readonly_fields = ['markdown', 'embed_html']
     form = forms.LinkForm
@@ -24,7 +24,7 @@ class LinkAdmin(admin.ModelAdmin):
 @admin.register(models.Embed)
 class EmbedAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'url', 'site']
-    raw_id_fields = ['site', 'content']
+    raw_id_fields = ['site', ]
     exclude = ['created_at', 'subclass_type']
     search_fields = ['title', 'url', ]
     readonly_fields = ['markdown', 'html', 'data', 'source']

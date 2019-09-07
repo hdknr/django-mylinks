@@ -92,28 +92,6 @@ class Link(SuperModel, Timestamp, methods.Link):
         abstract = True
 
 
-class Content(SuperModel, methods.Content):
-    url = models.CharField(
-        _('Embed URL'), unique=True, db_index=True,
-        max_length=300, validators=[methods.is_ascii])
-
-    embed = models.TextField(
-        _('Embed HTML'),
-        null=True, default=None, blank=True)
-
-    data = models.TextField(
-        _('Embed JSON'),
-        null=True, default=None, blank=True)
-
-    source = models.TextField(
-        _('Page Source HTML'),
-        null=True, default=None, blank=True)
-
-
-    class Meta:
-        abstract = True
-
-
 class Embed(models.Model, methods.Embed):
     url = models.CharField(
         _('Embed URL'), unique=True, db_index=True,
