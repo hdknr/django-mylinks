@@ -39,7 +39,3 @@ class EmbedQuerySet(models.QuerySet):
             return self.from_link(link, **params)
 
         return super().create(url=url, **params)
-    
-
-class ContentQuerySet(models.QuerySet):
-    pass

@@ -1,6 +1,9 @@
 # Django
 django
 
+# templates
+django-widget-tweaks
+
 # Tool
 beautifulsoup4
 django-click

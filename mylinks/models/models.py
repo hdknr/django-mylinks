@@ -45,6 +45,7 @@ class Embed(Link, defs.Embed):
     objects = querysets.EmbedQuerySet.as_manager()
 
 
+
 def create_entry(url):
     oembed = get_oembed(url)
     if oembed['html']:

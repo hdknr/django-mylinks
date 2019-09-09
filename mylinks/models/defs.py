@@ -72,12 +72,17 @@ class Site(Timestamp, methods.Site):
         abstract = True
 
 
-
-class Link(SuperModel, Timestamp, methods.Link):
+class Entry(models.Model):
 
     url = models.CharField(
         _('Link URL'), unique=True, db_index=True,
         max_length=300, validators=[methods.is_ascii])
+
+    class Meta:
+        abstract = True
+
+
+class Link(SuperModel, Entry, Timestamp, methods.Link):
 
     title = models.CharField(
         _('Title'), max_length=250,

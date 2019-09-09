@@ -21,9 +21,3 @@ class JSONResponse(http.HttpResponse):
 
 def page_not_found():
     raise http.Http404
-
-
-# def render(self, instance, template, content_type=None):
-#     res = self.render(
-#         template, content_type=content_type, instance=instance)
-#     return cors(res, origin='*')
