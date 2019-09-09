@@ -5,5 +5,16 @@
 {% block object-tools-items %}
 <li><a href="{% url 'admin:mylinks_link_add_entry' %}">{% trans 'Add Entry' %}</a></li>
 {{ block.super }}
+<li><a id="save-instance" href="#">{% trans 'Save' %}</a></li>
 {% endblock %}
 
+{% block admin_change_form_document_ready %} {{ block.super }}
+<script>
+  console.log(jQuery);
+  (function($){
+    $("a#save-instance").click(function(){
+      $("input[name='_save']").trigger('click');
+    })
+  })(django.jQuery);
+</script>
+{% endblock %}
