@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from django.utils.html import mark_safe
 from .. import models
 from . import forms, inlines, views
 
@@ -11,12 +12,12 @@ class SiteAdmin(admin.ModelAdmin):
 
 @admin.register(models.Link)
 class LinkAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'url', 'site', 'subclass_type']
+    list_display = ['id', 'anchor', 'site', 'subclass_type']
     list_filter = ['subclass_type']
-    exclude = ['created_at']
+    exclude = ['created_at', 'updated_at']
     raw_id_fields = ['site', ]
     search_fields = ['title', 'url', ]
-    readonly_fields = ['markdown', 'embed_html', 'site', 'subclass_type', 'updated_at', 'visited_at']
+    readonly_fields = ['link_and_markdown', 'embed_html', 'site', 'subclass_type', 'visited_at']
     inlines = [
         inlines.LinkTagItemInline,
     ]
@@ -27,6 +28,13 @@ class LinkAdmin(admin.ModelAdmin):
             path('add/entry/', views.add_entry, {'admin': self}, name='mylinks_link_add_entry'),
         ]
         return urls + super().get_urls()
+
+    def anchor(self, obj):
+        title = obj.title or obj.id
+        return mark_safe(f'<a href="{obj.url}" target="_admin">{title}</a>')
+
+    def link_and_markdown(self, obj):
+        return mark_safe(f'<a href="{obj.url}" target="_admin"><i class="fas fa-external-link-alt"></i></a>&nbsp;<span class="markdown">{obj.markdown}</span>')
 
 
 @admin.register(models.Embed)

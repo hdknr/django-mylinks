@@ -46,6 +46,7 @@ def api(url):
         title = oembed_title(res.json())
     else:
         embed = None
+        title = ''
     return embed, title, res.text
 
 def find(given_url):
