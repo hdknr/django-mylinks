@@ -34,7 +34,11 @@ class LinkAdmin(admin.ModelAdmin):
         return mark_safe(f'<a href="{obj.url}" target="_admin">{title}</a>')
 
     def link_and_markdown(self, obj):
-        return mark_safe(f'<a href="{obj.url}" target="_admin"><i class="fas fa-external-link-alt"></i></a>&nbsp;<span class="markdown">{obj.markdown}</span>')
+        return mark_safe(
+            f'<a href="{obj.url}" target="_admin">'
+            f'<i class="fas fa-external-link-alt"></i></a>&nbsp;'
+            f'{obj.title}<a href="#" class="markdown" title="{obj.markdown}">&nbsp;'
+            f'<i class="far fa-copy"></i></a>')
 
 
 @admin.register(models.Embed)
