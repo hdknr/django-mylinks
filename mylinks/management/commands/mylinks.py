@@ -1,5 +1,8 @@
 import djclick as click
+from mimetypes import guess_type
 from ... import models
+import sys
+import json
 from logging import getLogger
 logger = getLogger()
 
@@ -20,12 +23,15 @@ def create_entry(ctx, url):
 
 @main.command()
 @click.argument('url')
+@click.option('--outfile', '-o', default=None)
 @click.pass_context
-def get_oembed(ctx, url):
+def get_oembed(ctx, url, outfile):
     ''' create oembed'''
     from mylinks.oembed import get_oembed 
     res = get_oembed(url)
-    print(res['url'])
-    print(res['html'])
-    print(res['source'])
-    print(res['data'])
+    t = (outfile and guess_type(outfile)[0] or 'application/text').split('/')[1]
+    output = outfile and open(outfile, 'w') or sys.stdout 
+    if t == 'text':
+        output.write(str(res))
+    elif t == 'json':
+        json.dump(res, output, indent=2, ensure_ascii=False)

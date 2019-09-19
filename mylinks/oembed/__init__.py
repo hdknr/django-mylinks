@@ -2,6 +2,7 @@
 from django.utils.http import urlquote
 from django.core.cache import cache
 from bs4 import BeautifulSoup as Soup
+from urllib.parse import urljoin
 import requests
 import re
 
@@ -19,14 +20,19 @@ PATTERN = [
 ]
 
 
-def parse_text(html, selector):
-    soup = Soup(html, 'html.parser')
+def get_soup(src, from_encoding=None):
+    return Soup(src, 'html.parser', from_encoding=from_encoding)
+
+
+def parse_text(html, selector, from_encoding=None):
+    soup = get_soup(html, from_encoding=from_encoding)
     elms = soup and soup.select(selector)
     return elms and elms[0].text or ''
 
-def parse_embed_url(html):
+
+def parse_embed_url(html, from_encoding=None):
     '''parse oembed url from page'''
-    soup = Soup(html, 'html.parser')
+    soup = get_soup(html, from_encoding=from_encoding)
     items = soup and soup.select('link[type="application/json+oembed"]')
     return items and items[0].attrs['href']
 
@@ -52,15 +58,20 @@ def api(url):
 def find(given_url):
     url, title, source, embed, data = None, None, None, None, None
     res = requests.get(given_url)
+    res.encoding = res.apparent_encoding
+    from_encoding = res.encoding if res.encoding != 'ISO-8859-1' else None
 
     if res and res.status_code == 200 \
             and res.headers.get('Content-Type', '').startswith('text/html'):
-        url, source = parse_embed_url(res.text), res.text
+        url, source = (
+            parse_embed_url(res.text, from_encoding=from_encoding),
+            res.text)
 
     if url:
+        url = urljoin(given_url, url) 
         embed, title, data = api(url)
 
-    title = title or parse_text(source, 'title')
+    title = title or parse_text(source, 'title', from_encoding=from_encoding)
 
     return (url, title, embed, source, data)
 
