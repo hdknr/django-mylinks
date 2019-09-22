@@ -76,7 +76,7 @@ class Entry(models.Model):
 
     url = models.CharField(
         _('Link URL'), unique=True, db_index=True,
-        max_length=300, validators=[methods.is_ascii])
+        max_length=400, validators=[methods.is_ascii])
 
     class Meta:
         abstract = True
@@ -100,7 +100,7 @@ class Link(SuperModel, Entry, Timestamp, methods.Link):
 class Embed(models.Model, methods.Embed):
     url = models.CharField(
         _('Embed URL'), unique=True, db_index=True,
-        max_length=300, validators=[methods.is_ascii])
+        max_length=400, validators=[methods.is_ascii])
 
     html = models.TextField(
         _('Embed HTML'),
