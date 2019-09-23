@@ -20,8 +20,8 @@ PATTERN = [
 ]
 
 
-def get_soup(src, from_encoding=None):
-    return Soup(src, 'html.parser', from_encoding=from_encoding)
+def get_soup(src, from_encoding=None, parser='html.parser'):
+    return Soup(src, parser, from_encoding=from_encoding)
 
 
 def parse_text(html, selector, from_encoding=None):
@@ -58,8 +58,9 @@ def api(url):
 def find(given_url):
     url, title, source, embed, data = None, None, None, None, None
     res = requests.get(given_url)
-    res.encoding = res.apparent_encoding
-    from_encoding = res.encoding if res.encoding != 'ISO-8859-1' else None
+
+    res.encoding = res.encoding if res.encoding in ['utf-8'] else res.apparent_encoding
+    from_encoding = None if res.encoding in ['ISO-8859-1', 'ascii'] else res.encoding
 
     if res and res.status_code == 200 \
             and res.headers.get('Content-Type', '').startswith('text/html'):
