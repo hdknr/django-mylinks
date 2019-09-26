@@ -61,7 +61,7 @@ def urlget(url, headers={}):
         }
     default_headers.update(headers)
 
-    return urlget(url, headers=default_headers)
+    return requests.get(url, headers=default_headers)
 
 def find(given_url):
     url, title, source, embed, data = None, None, None, None, None
