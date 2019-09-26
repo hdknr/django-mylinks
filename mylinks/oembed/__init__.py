@@ -46,7 +46,7 @@ def oembed_title(json_data):
     return json_data.get('title', None)
 
 def api(url):
-    res =  requests.get(url)
+    res =  urlget(url)
     if res.headers.get('Content-Type', '').startswith('application/json'):
         embed = oembed_html(res.json())
         title = oembed_title(res.json())
@@ -55,18 +55,32 @@ def api(url):
         title = ''
     return embed, title, res.text
 
+def urlget(url, headers={}):
+    default_headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        }
+    default_headers.update(headers)
+
+    return urlget(url, headers=default_headers)
+
 def find(given_url):
     url, title, source, embed, data = None, None, None, None, None
-    res = requests.get(given_url)
+    res = urlget(given_url)
 
     res.encoding = res.encoding if res.encoding in ['utf-8'] else res.apparent_encoding
     from_encoding = None if res.encoding in ['ISO-8859-1', 'ascii'] else res.encoding
+
+    # import pdb; pdb.set_trace()
 
     if res and res.status_code == 200 \
             and res.headers.get('Content-Type', '').startswith('text/html'):
         url, source = (
             parse_embed_url(res.text, from_encoding=from_encoding),
             res.text)
+    else:
+        # TODO: ERROR
+        pass
+
 
     if url:
         url = urljoin(given_url, url) 
