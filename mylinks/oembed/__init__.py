@@ -56,8 +56,9 @@ def api(url):
     return embed, title, res.text
 
 def urlget(url, headers={}):
+    UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
     default_headers = {
-        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "User-Agent": UA,
         }
     default_headers.update(headers)
 
@@ -69,8 +70,6 @@ def find(given_url):
 
     res.encoding = res.encoding if res.encoding in ['utf-8'] else res.apparent_encoding
     from_encoding = None if res.encoding in ['ISO-8859-1', 'ascii'] else res.encoding
-
-    # import pdb; pdb.set_trace()
 
     if res and res.status_code == 200 \
             and res.headers.get('Content-Type', '').startswith('text/html'):
