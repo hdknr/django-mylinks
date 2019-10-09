@@ -48,8 +48,8 @@ class Embed(Link, defs.Embed):
 
 def create_entry(url):
     oembed = get_oembed(url)
-    if oembed['html']:
-        oembed['url'] = url
-        return Embed.objects.create(**oembed)
+    if oembed.html:
+        oembed.url = url
+        return Embed.objects.create(**oembed.to_dict())
     else: 
-        return Link.objects.create(url=url, title=oembed['title'])
+        return Link.objects.create(url=url, title=oembed.title)

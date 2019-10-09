@@ -1,8 +1,14 @@
-# coding: utf-8
 from django.utils.http import urlquote
 from django.core.cache import cache
+from django.utils.functional import cached_property
+
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urljoin
+
+from dataclasses import field
+import marshmallow
+from marshmallow_dataclass import dataclass
+from typing import ClassVar, Type
 import requests
 import re
 
@@ -42,18 +48,10 @@ def oembed_html(json_data):
         if i in json_data:
             return json_data[i]
 
+
 def oembed_title(json_data):
     return json_data.get('title', None)
 
-def api(url):
-    res =  urlget(url)
-    if res.headers.get('Content-Type', '').startswith('application/json'):
-        embed = oembed_html(res.json())
-        title = oembed_title(res.json())
-    else:
-        embed = None
-        title = ''
-    return embed, title, res.text
 
 def urlget(url, headers={}):
     UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
@@ -62,45 +60,75 @@ def urlget(url, headers={}):
         }
     default_headers.update(headers)
 
-    return requests.get(url, headers=default_headers)
-
-def find(given_url):
-    url, title, source, embed, data = None, None, None, None, None
-    res = urlget(given_url)
-
+    res = requests.get(url, headers=default_headers)
     res.encoding = res.encoding if res.encoding in ['utf-8'] else res.apparent_encoding
-    from_encoding = None if res.encoding in ['ISO-8859-1', 'ascii'] else res.encoding
+    setattr(res, 'from_encoding', None if res.encoding in ['ISO-8859-1', 'ascii'] else res.encoding)
+    return res
 
-    if res and res.status_code == 200 \
-            and res.headers.get('Content-Type', '').startswith('text/html'):
-        url, source = (
-            parse_embed_url(res.text, from_encoding=from_encoding),
-            res.text)
-    else:
-        # TODO: ERROR
-        pass
+class Helper:
+    @cached_property
+    def schema(self):
+        return self.__class__.Schema()
 
+    def to_json(self, *args, **kwargs):
+        return self.schema.dumps(self, *args, **kwargs)
 
-    if url:
-        url = urljoin(given_url, url) 
-        embed, title, data = api(url)
+    def to_dict(self, *args, **kwargs):
+        return self.schema.dump(self, *args, **kwargs)
 
-    title = title or parse_text(source, 'title', from_encoding=from_encoding)
+@dataclass
+class Oembed(Helper):
+    url:  str = field(
+        default=None,
+        metadata = { 
+            "marshmallow_field": marshmallow.fields.Url()   # Custom marshmallow field
+        })
+    title: str = None
+    html: str = None
+    source: str = None
+    data: str = None
 
-    return (url, title, embed, source, data)
+    Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema # For the type checker
 
+    @classmethod
+    def api(cls, url, source=None, from_encoding=None):
+        res =  urlget(url)
 
-def resolve(url):
-    for pattern in PATTERN:
-        match = re.search(pattern[0], url)
-        if match:
-            url = pattern[1].format(url=urlquote(url), **match.groupdict())
-            embed, title, data = api(url)
-            return (url, title, embed, None, data)
+        if res and res.headers.get('Content-Type', '').startswith('application/json'):
+            html = oembed_html(res.json())
+            title = oembed_title(res.json())
+        else:
+            html = None
+            title = ''
 
-    return find(url)
+        title = title or parse_text(source, 'title', from_encoding=from_encoding)
+        return cls(url=url, html=html, title=title, data=res.text, source=source)
+
+    @classmethod
+    def find(cls, given_url):
+        res = urlget(given_url)
+
+        if res and res.status_code == 200 \
+                and res.headers.get('Content-Type', '').startswith('text/html'):
+
+            url, source = (
+                parse_embed_url(res.text, from_encoding=res.from_encoding),
+                res.text)
+
+            if url:
+                return cls.api(url, source=source, from_encoding=res.from_encoding)
+
+    @classmethod
+    def create(cls, given_url):
+        for pattern in PATTERN:
+            match = re.search(pattern[0], given_url)
+            if match:
+                url = pattern[1].format(url=urlquote(given_url), **match.groupdict())
+                html, title, data = api(url)
+                return cls(url=url, title=title, html=html, source=None, data=data)
+
+        return cls.find(given_url)
 
 
 def get_oembed(url, force_source=False):
-    res = dict(zip(('url', 'title', 'html', 'source', 'data'), resolve(url)))    #(url, html
-    return res
+    return Oembed.create(url)

@@ -2,7 +2,6 @@ import djclick as click
 from mimetypes import guess_type
 from ... import models
 import sys
-import json
 from logging import getLogger
 logger = getLogger()
 
@@ -34,4 +33,4 @@ def get_oembed(ctx, url, outfile):
     if t == 'text':
         output.write(str(res))
     elif t == 'json':
-        json.dump(res, output, indent=2, ensure_ascii=False)
+        output.write(res.Schema().dumps(res, indent=2, ensure_ascii=False))

@@ -4,7 +4,6 @@ from django.utils import timezone
 
 from bs4 import BeautifulSoup as Soup
 from urllib.parse import urlparse
-from mylinks.oembed import get_oembed
 import json
 import re
 

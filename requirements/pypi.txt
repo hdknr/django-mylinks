@@ -4,6 +4,9 @@ django
 # templates
 django-widget-tweaks
 
+# data
+marshmallow_dataclass
+
 # Tool
 beautifulsoup4
 django-click
@@ -16,3 +19,4 @@ django-filter
 
 # Parser
 html5lib
+
