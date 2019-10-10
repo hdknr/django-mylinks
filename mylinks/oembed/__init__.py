@@ -117,6 +117,9 @@ class Oembed(Helper):
 
             if url:
                 return cls.api(url, source=source, from_encoding=res.from_encoding)
+            return cls(
+                url=given_url, source=res.text, 
+                title=parse_text(res.text, 'title', from_encoding=res.from_encoding))
 
     @classmethod
     def create(cls, given_url):
@@ -124,8 +127,7 @@ class Oembed(Helper):
             match = re.search(pattern[0], given_url)
             if match:
                 url = pattern[1].format(url=urlquote(given_url), **match.groupdict())
-                html, title, data = api(url)
-                return cls(url=url, title=title, html=html, source=None, data=data)
+                return cls.api(url)
 
         return cls.find(given_url)
 
