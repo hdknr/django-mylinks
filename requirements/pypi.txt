@@ -20,3 +20,5 @@ django-filter
 # Parser
 html5lib
 
+# RSS
+feedparser

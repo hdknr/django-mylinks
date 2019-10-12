@@ -34,3 +34,19 @@ def get_oembed(ctx, url, outfile):
         output.write(str(res))
     elif t == 'json':
         output.write(res.Schema().dumps(res, indent=2, ensure_ascii=False))
+
+@main.command()
+@click.option('--id', '-i', default=None)
+@click.option('--url', '-u', default=None)
+@click.pass_context
+def poll(ctx, id, url):
+    feeds = None 
+    if id:
+        feeds = models.Feed.objects.filter(id=id)
+    elif url:
+        feeds = [models.Feed.objects.get_or_create(url=url)]
+    else:
+        feeds = models.Feed.objects.all()
+
+    for feed in feeds:
+        models.FeedEntry.objects.poll_for(feed)

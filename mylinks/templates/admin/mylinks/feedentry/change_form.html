@@ -1,0 +1,38 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{# https://github.com/django/django/blob/master/django/contrib/admin/templates/admin/change_form.html #}
+
+{% block object-tools-items %} {{ block.super }}
+<li><a id="save-instance" href="#">{% trans 'Save' %}</a></li>
+{% endblock %}
+
+{% block admin_change_form_document_ready %} {{ block.super }}
+<script>
+  (function ($) {
+    function clip(text) {
+      var tmp = document.createElement("input");
+      document.body.appendChild(tmp);
+      tmp.value = text;
+      tmp.select();
+      var result = document.execCommand("copy");
+      document.body.removeChild(tmp);
+      return result;
+    }
+
+    $("a#save-instance").click(function () {
+      $("input[name='_save']").trigger('click');
+    })
+
+    $(".markdown").click(function () {
+      clip($(this).attr('title'));
+    })
+  })(django.jQuery);
+
+</script>
+{% endblock %}
+
+
+{% block extrastyle %} {{ block.super }}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+  integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+{% endblock %}

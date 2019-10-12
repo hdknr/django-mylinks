@@ -83,7 +83,6 @@ class Entry(models.Model):
 
 
 class Link(SuperModel, Entry, Timestamp, methods.Link):
-
     title = models.CharField(
         _('Title'), max_length=250,
         null=True, blank=True, default=None)
@@ -95,7 +94,6 @@ class Link(SuperModel, Entry, Timestamp, methods.Link):
 
     class Meta:
         abstract = True
-
 
 class Embed(models.Model, methods.Embed):
     url = models.CharField(
@@ -114,6 +112,39 @@ class Embed(models.Model, methods.Embed):
         _('Page Source HTML'),
         null=True, default=None, blank=True)
 
+    class Meta:
+        abstract = True
+
+
+class FeedEntry(models.Model, methods.FeedEntry):
+    # `url = models.CharField(
+    #    _('Feed Entry URL'), unique=True, db_index=True,
+    #         max_length=400, validators=[methods.is_ascii])
+
+    description = models.TextField(
+        _('Feed Entry Description'), blank=True, null=True)
+    published_at = models.DateTimeField(
+        _('Feed Entry Published At'), auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    trashed = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+class Feed(Timestamp, methods.Feed):
+    title = models.CharField(
+        _('Feed Title'), max_length=1000, blank=True, null=True)
+    url = models.URLField(
+        _('Feed URL'), unique=True)
+    link = models.URLField(
+        _('Feed Link'), blank=True, null=True)
+    description = models.TextField(
+        _('Feed Description'), blank=True, null=True)
+
+    published_at = models.DateTimeField(
+        _('Feed Published At'), blank=True, null=True)
+    last_polled_at = models.DateTimeField(
+        _('Feed Last Polled At'), blank=True, null=True)
 
     class Meta:
         abstract = True

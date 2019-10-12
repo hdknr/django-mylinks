@@ -30,7 +30,7 @@ class Link(defs.Link):
 
     def __str__(self):
         return self.title or self.url or ''
-        
+
     def save(self, *args, **kwargs):
         self.update_site()
         super().save(*args, **kwargs)
@@ -45,11 +45,35 @@ class Embed(Link, defs.Embed):
     objects = querysets.EmbedQuerySet.as_manager()
 
 
-
 def create_entry(url):
     oembed = get_oembed(url)
     if oembed.html:
         oembed.url = url
         return Embed.objects.create(**oembed.to_dict())
-    else: 
+    else:
         return Link.objects.create(url=url, title=oembed.title)
+
+
+class Feed(defs.Feed):
+
+    class Meta:
+        verbose_name = _('Feed')
+        verbose_name_plural = _('Feeds')
+
+    def __str__(self):
+        return self.title or str(self.id)
+
+class FeedEntry(defs.FeedEntry):
+    link = models.ForeignKey(
+        Link, null=True, blank=True, default=None, on_delete=models.SET_NULL)
+
+    feeds = models.ManyToManyField(Feed, blank=True)
+    class Meta:
+        ordering = ['-published_at']
+        verbose_name = _('Feed Entry')
+        verbose_name_plural = _('Feed Entries')
+
+    def __str__(self):
+        return self.link and str(self.link) or str(self.id)
+
+    objects = querysets.FeedEntryQuerySet.as_manager()

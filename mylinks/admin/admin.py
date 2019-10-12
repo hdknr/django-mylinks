@@ -1,8 +1,15 @@
 from django.contrib import admin
 from django.urls import path
 from django.utils.html import mark_safe
+from django.template import engines
+from django.utils.translation import ugettext_lazy as _
 from .. import models
 from . import forms, inlines, views
+
+
+def render(src, request=None, engine_name='django', safe=True, **ctx):
+    text = engines[engine_name].from_string(src).render(ctx, request=request)
+    return safe and mark_safe(text) or text
 
 
 @admin.register(models.Site)
@@ -51,3 +58,70 @@ class EmbedAdmin(admin.ModelAdmin):
     inlines = [
         inlines.LinkTagItemInline,
     ]
+
+
+@admin.register(models.Feed)
+class FeedAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in models.Feed._meta.fields]
+    exclude = ['created_at']
+    readonly_fields = ['updated_at']
+
+
+
+@admin.register(models.FeedEntry)
+class FeedEntryAdmin(admin.ModelAdmin):
+    raw_id_fields = ['link', ]
+    list_display = [
+        f.name for f in models.FeedEntry._meta.fields
+        if f.name not in ['description', 'created_at', 'updated_at']
+    ]
+    exclude = ['subclass_type', 'created_at', 'description', 'title', 'url', 'feeds', 'feed']
+    readonly_fields = [
+        'title_and_url', 'html', 'navigates', 
+        'feeds', 
+        # 'updated_at'
+    ]
+    list_filter = ['is_read']
+    inlines = [
+        inlines.LinkTagItemInline,
+    ]
+    search_fields = ['title', 'description']
+    actions = ['mark_as_read', 'mark_as_trashed']
+
+    def navigates(self, obj):
+        src = '''
+        {% if prev_unread %}<p><a href="{% url 'admin:mylinks_feedentry_change' prev_unread.id %}"> {{ prev_unread.id }}.{{ prev_unread }} </a> </p>{%  endif %}
+        {% if next_unread %}<p><a href="{% url 'admin:mylinks_feedentry_change' next_unread.id %}"> {{ next_unread.id }}.{{ next_unread }} </a> </p>{%  endif %}
+        '''
+        return render(src, current=obj, next_unread=obj.next_unread, prev_unread=obj.prev_unread)
+
+    def title_and_url(self, obj):
+        try:
+            return self.title_and_url_run(obj)
+        except:
+            import traceback
+            print(traceback.format_exc())
+
+
+    def title_and_url_run(self, obj):
+        src = '''
+            <a href="{{ current.link.url }}" target="_feed"><i class="fas fa-external-link-alt"></i></a> &nbsp;
+            <span>{{ current.link.title|safe }}</span>&nbsp;
+            <a href="#" class="markdown" title="{{ current.markdown_link}}"><i class="far fa-copy"></i></a>
+        '''
+        return render(src, current=obj)
+
+    def html(self, obj):
+        return mark_safe(obj.description)
+
+    def mark_as_read(self, request, queryset):
+        counts = queryset.update(is_read=True)
+        self.message_user(request, f"{counts} successfully marked as read.")
+
+    mark_as_read.short_description = _('Mark as Read')
+
+    def mark_as_trashed(self, request, queryset):
+        counts = queryset.update(is_read=True, trashed=True)
+        self.message_user(request, f"{counts} successfully marked as trashed.")
+
+    mark_as_trashed.short_description = _('Mark as Trashed')
