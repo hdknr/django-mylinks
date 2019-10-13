@@ -116,6 +116,7 @@ class Oembed(Helper):
                 res.text)
 
             if url:
+                url = url.startswith('.') and urljoin(given_url, url) or url
                 return cls.api(url, source=source, from_encoding=res.from_encoding)
             return cls(
                 url=given_url, source=res.text, 
