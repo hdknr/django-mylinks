@@ -77,16 +77,25 @@ class FeedEntryAdmin(admin.ModelAdmin):
     ]
     exclude = ['subclass_type', 'created_at', 'description', 'title', 'url', 'feeds', 'feed']
     readonly_fields = [
+        'link_tags',
         'title_and_url', 'html', 'navigates', 
-        'feeds', 
+        'feeds', 'link', 
         # 'updated_at'
     ]
     list_filter = ['is_read']
-    inlines = [
-        inlines.LinkTagItemInline,
-    ]
-    search_fields = ['title', 'description']
+    search_fields = ['link__title', 'description']
     actions = ['mark_as_read', 'mark_as_trashed']
+    form = forms.FeedEntryForm
+
+    def link_tags(self, obj):
+        src = '''
+        <ul>
+        {% for tag in current.link.tags.all %}
+            <li><a target="_admin" href="{% url 'admin:mytaggit_tag_change' tag.id %}">{{ tag }}</a></li>
+        {% endfor %}
+        </ul>
+        '''
+        return render(src, current=obj)
 
     def navigates(self, obj):
         src = '''
