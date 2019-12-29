@@ -116,10 +116,11 @@ class Oembed(Helper):
                 res.text)
 
             if url:
-                url = url.startswith('.') and urljoin(given_url, url) or url
+                url = urljoin(given_url, url)   # url without hostname
                 return cls.api(url, source=source, from_encoding=res.from_encoding)
+
             return cls(
-                url=given_url, source=res.text, 
+                url=given_url, source=res.text,
                 title=parse_text(res.text, 'title', from_encoding=res.from_encoding))
 
     @classmethod
